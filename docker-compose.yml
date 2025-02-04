@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  flask_api:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_HOST=your_mysql_host
+      - MYSQL_USER=your_mysql_user
+      - MYSQL_PASSWORD=your_mysql_password
+      - MYSQL_DB=your_database
+    volumes:
+      - .:/app
