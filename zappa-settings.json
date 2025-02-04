@@ -1,0 +1,67 @@
+{
+  "dev": {
+    "app_function": "app.app",
+    "aws_region": "ap-southeast-1",
+    "project_name": "example-project-name",
+    "runtime": "python3.10",
+    "s3_bucket": "example-project-name-dev",
+    "aws_environment_variables": {
+      "STAGE": "dev"
+    },
+    "timeout_seconds": 300,
+    "endpoint_configuration": ["REGIONAL"],
+    "keep_warm": false,
+    "manage_roles": false,
+    "role_name": "basic-lambda",
+    "role_arn": "arn:aws:iam::723108571698:role/basic-lambda",
+    "num_retained_versions": 3,
+    "slim_handler": true,
+    "vpc_config": {
+      "SubnetIds": ["subnet-955feef2", "subnet-386ecc71"],
+      "SecurityGroupIds": ["sg-073376368b9711c03"]
+    }
+  },
+  "staging": {
+    "app_function": "app.app",
+    "aws_region": "ap-southeast-1",
+    "project_name": "example-project-name",
+    "runtime": "python3.10",
+    "s3_bucket": "example-project-name-dev",
+    "aws_environment_variables": {
+      "STAGE": "staging"
+    },
+    "timeout_seconds": 300,
+    "endpoint_configuration": ["REGIONAL"],
+    "keep_warm": false,
+    "manage_roles": false,
+    "role_name": "basic-lambda",
+    "role_arn": "arn:aws:iam::723108571698:role/basic-lambda",
+    "num_retained_versions": 3,
+    "slim_handler": true,
+    "vpc_config": {
+      "SubnetIds": ["subnet-955feef2", "subnet-386ecc71"],
+      "SecurityGroupIds": ["sg-073376368b9711c03"]
+    }
+  },
+  "production": {
+    "app_function": "app.app",
+    "aws_region": "ap-southeast-1",
+    "project_name": "example-project-name",
+    "runtime": "python3.10",
+    "s3_bucket": "example-project-name-production",
+    "aws_environment_variables": {
+      "STAGE": "production"
+    },
+    "timeout_seconds": 900,
+    "keep_warm": true,
+    "num_retained_versions": 3,
+    "slim_handler": true,
+    "manage_roles": false,
+    "role_name": "basic-lambda",
+    "role_arn": "arn:aws:iam::723108571698:role/basic-lambda",
+    "vpc_config": {
+      "SubnetIds": ["subnet-955feef2", "subnet-386ecc71"],
+      "SecurityGroupIds": ["sg-073376368b9711c03"]
+    }
+  }
+}
