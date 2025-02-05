@@ -1,0 +1,56 @@
+pipelines:
+  branches:
+    dev:
+      - step:
+          name: Deploy to dev
+          image: python:3.10
+          caches:
+            - venv
+          deployment: test
+          script:
+            - python -m venv venv
+            - source venv/bin/activate
+            - pip install --upgrade pip
+            - pip install -r requirements.txt
+            - zappa update dev || zappa deploy dev
+    master:
+      - step:
+          name: Deploy to staging
+          image: python:3.10
+          caches:
+            - venv
+          deployment: staging
+          script:
+            - python -m venv venv
+            - source venv/bin/activate
+            - pip install --upgrade pip
+            - pip install -r requirements.txt
+            - zappa update staging || zappa deploy staging
+      - step:
+          name: Deploy to production
+          image: python:3.10
+          caches:
+            - venv
+          trigger: manual
+          deployment: production
+          script:
+            - python -m venv venv
+            - source venv/bin/activate
+            - pip install --upgrade pip
+            - pip install -r requirements.txt
+            - zappa update production || zappa deploy production
+
+  custom:
+    zappa_tail:
+      - step:
+          name: Tail Dev
+          image: python:3.10
+          script:
+            - python -m venv venv
+            - source venv/bin/activate
+            - pip install zappa
+            - zappa tail dev --since 10m
+
+definitions:
+  caches:
+    venv: $BITBUCKET_CLONE_DIR/venv
