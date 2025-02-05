@@ -17,7 +17,6 @@ setup:
 	pip install -r requirements.txt
 
 run:
-	export FLASK_DEBUG=1
 	flask run
 
 test:
