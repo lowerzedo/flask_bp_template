@@ -1,15 +1,22 @@
 from flask import Flask
-from .config import Config
+from .config import Config, TestConfig
 from .routes.blueprint import blueprint
 from .utils.logger import setup_logging
 
-def create_app(config_class=Config) -> Flask:
+
+def create_app(config_name="default", config_class=Config) -> Flask:
     """
     Create and configure the Flask application.
 
     :param config_class: Configuration class to use.
     :return: Configured Flask application.
     """
+
+    if config_name == "testing":
+        config_class = TestConfig
+    else:
+        config_class = Config
+
     app = Flask(__name__)
     app.config.from_object(config_class)
 
@@ -17,12 +24,13 @@ def create_app(config_class=Config) -> Flask:
     setup_logging(app)
 
     # Register Blueprints
-    app.register_blueprint(blueprint, url_prefix='/example')
+    app.register_blueprint(blueprint, url_prefix="/example")
 
     # Register error handlers
     register_error_handlers(app)
 
     return app
+
 
 def register_error_handlers(app: Flask) -> None:
     """
@@ -30,6 +38,7 @@ def register_error_handlers(app: Flask) -> None:
 
     :param app: Flask application instance.
     """
+
     @app.errorhandler(404)
     def not_found_error(error):
         return {"error": "Resource not found"}, 404
