@@ -1,6 +1,16 @@
 from functools import wraps
-from typing import Callable, Any
-from flask import request, jsonify
+import requests
+import json
+from flask import request, jsonify, current_app, make_response, redirect
+from app.utils.secrets import get_secret
+from markupsafe import escape
+from app.services.user_access import get_user_access
+
+auth_url = get_secret()[4]
+
+cas_attrs = ['sAMAccountName']
+CAS_URLs = 'https://cas.apiit.edu.my'
+CAS_VALIDATE_URL = CAS_URLs + '/cas/p3/serviceValidate'
 
 
 def acl_required_to_login(allowed_acl):
@@ -14,7 +24,7 @@ def acl_required_to_login(allowed_acl):
                     else cas_auth(allowed_acl, f, *args, **kwargs)
                 )
             except Exception as e:
-                logger.error({"Error": e})
+                current_app.logger.error({"Error": e})
                 return (
                     jsonify({"error": "An error has occurred during authentication"}),
                     500,
@@ -98,7 +108,7 @@ def cas_auth(allowed_acl, f, *args, **kwargs):
         params={
             "format": "json",
             "service": request.base_url,
-            "ticket": str(jinja2.escape(request.args.get("ticket"))),
+            "ticket": str(escape(request.args.get("ticket"))),
         },
     )
     if resp.status_code != 200:
