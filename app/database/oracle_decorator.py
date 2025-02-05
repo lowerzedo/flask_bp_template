@@ -1,10 +1,7 @@
 import cx_Oracle
 from functools import wraps
-from typing import Callable, Any
+from app.utils.secrets import get_secret
 from flask import current_app
-
-import cx_Oracle
-from functools import wraps
 
 def conn(fn):
     @wraps(fn)

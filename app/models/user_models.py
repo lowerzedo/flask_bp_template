@@ -1,19 +1,17 @@
 from typing import List, Dict, Any, Optional
+from app.database.mysql_decorator import conn_execute_msql
 
-def create_user_query(username: str, email: str, password: str, *, conn, cursor) -> int:
+
+@conn_execute_msql(stats="POST")
+def create_user_query(cursor, query_obj: Dict[str, str]):
     """
     Create a new user in the database.
-
-    :param username: Username of the new user.
-    :param email: User's email.
-    :param password: Hashed password.
-    :param conn: MySQL connection.
-    :param cursor: MySQL cursor.
-    :return: ID of the newly created user.
     """
-    sql = "INSERT INTO users (username, email, password) VALUES (%s, %s, %s)"
-    cursor.execute(sql, (username, email, password))
-    return cursor.lastrowid
+    return """
+        INSERT INTO sample_students (student_name, student_id, student_course) 
+        VALUES (%(student_name)s, %(student_id)s, %(student_course)s)
+    """
+
 
 def get_user_by_id_query(user_id: int, *, conn, cursor) -> Optional[Dict[str, Any]]:
     """
@@ -27,6 +25,7 @@ def get_user_by_id_query(user_id: int, *, conn, cursor) -> Optional[Dict[str, An
     sql = "SELECT id, username, email FROM users WHERE id = %s"
     cursor.execute(sql, (user_id,))
     return cursor.fetchone()
+
 
 def update_user_query(user_id: int, username: str, email: str, *, conn, cursor) -> int:
     """
@@ -43,6 +42,7 @@ def update_user_query(user_id: int, username: str, email: str, *, conn, cursor) 
     cursor.execute(sql, (username, email, user_id))
     return cursor.rowcount
 
+
 def delete_user_query(user_id: int, *, conn, cursor) -> int:
     """
     Delete a user by ID.
@@ -55,6 +55,7 @@ def delete_user_query(user_id: int, *, conn, cursor) -> int:
     sql = "DELETE FROM users WHERE id = %s"
     cursor.execute(sql, (user_id,))
     return cursor.rowcount
+
 
 def list_users_query(*, conn, cursor) -> List[Dict[str, Any]]:
     """
