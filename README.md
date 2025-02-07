@@ -75,6 +75,8 @@ make run
 
 ### Docker Setup
 
+Docker is here to simulate the runtime environment of AWS Lambda for specific test cases. If you want to test in the local env, I'd recommend to create another docker file with Python slim image.
+
 1. Build the Docker image:
 
 ```bash
