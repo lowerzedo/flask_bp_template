@@ -20,7 +20,7 @@ run:
 	flask run
 
 test:
-	pytest tests/ -v
+	PYTHONPATH=$(PWD) pytest tests/ -v
 
 lint:
 	flake8 app/

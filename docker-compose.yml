@@ -9,9 +9,9 @@ services:
       - FLASK_APP=app
       - FLASK_ENV=development
       - AWS_LAMBDA_FUNCTION_NAME=flask-app-local
-      - MYSQL_HOST=your_mysql_host
-      - MYSQL_USER=your_mysql_user
-      - MYSQL_PASSWORD=your_mysql_password
-      - MYSQL_DB=your_database
+      - MYSQL_HOST=example.rds.com
+      - MYSQL_USER=sample_user
+      - MYSQL_PASSWORD=sample_password
+      - MYSQL_DB=sample_database
     volumes:
       - .:/var/task

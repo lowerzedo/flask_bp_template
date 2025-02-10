@@ -42,8 +42,9 @@ app/
 ### Prerequisites
 
 - Python 3.10+
+  - If you don't have Oracle DB connections you may choose newer version of Python
 - Docker (optional)
-- MySQL/MSSQL/Oracle database
+- MySQL/MSSQL/Oracle DB connection(s)
 
 ### Local Development Setup
 
@@ -96,7 +97,7 @@ make docker-run
 - POST /example/user
   - Creates a new user
   - Requires authentication
-  - Validates request body using Marshmallow schemas
+  - Validates request body using Pydantic schemas
 
 ## 🔒 Authentication
 
@@ -140,6 +141,19 @@ Configuration is managed through zappa-settings.json .
 
 - Development: Logs to both console and logs/app.log
 - Production: Structured JSON logging for CloudWatch
+
+## ✅ Validation Options
+
+The template supports two validation approaches:
+
+### Pydantic Validation
+
+### Marshmallow Validation
+
+Key differences:
+
+- **Pydantic**: Type hints, runtime validation, better IDE support
+- **Marshmallow**: More flexible serialization, legacy support, extensive validation options
 
 ## 🤝 Contributing
 
