@@ -10,8 +10,31 @@ class StudentData(TypedDict):
     student_id: str
     student_course: str
 
+
 @conn_msql
-def create_user(validated_data: StudentData, **kwargs: Dict[str, MySQLConnection]) -> Response:
+def get_all_users(**kwargs: Dict[str, MySQLConnection]) -> Response:
+    """
+    Retrieves all users from the database and returns them as a JSON response.
+    Args:
+        **kwargs: Additional keyword arguments. Expected keys are:
+            - "msql" (MySQLConnection): The MySQL connection object.
+    Returns:
+        Response: A Flask response object containing the list of users in JSON format.
+    """
+    conn: MySQLConnection = kwargs["msql"]
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT * FROM sample_students")
+        users = cursor.fetchall()
+        return jsonify(users)
+    finally:
+        cursor.close()
+
+
+@conn_msql
+def create_user(
+    validated_data: StudentData, **kwargs: Dict[str, MySQLConnection]
+) -> Response:
     """
     Creates a new user in the database with the provided validated data.
     Args:
@@ -31,7 +54,7 @@ def create_user(validated_data: StudentData, **kwargs: Dict[str, MySQLConnection
 
     current_app.logger.info(f"Creating new user with student ID: {student_id}")
 
-    conn: MySQLConnection = kwargs['msql']
+    conn: MySQLConnection = kwargs["msql"]
     cursor = conn.cursor()
 
     query_obj: StudentData = {
@@ -45,7 +68,9 @@ def create_user(validated_data: StudentData, **kwargs: Dict[str, MySQLConnection
     try:
         create_user_query(cursor, query_obj)
         conn.commit()
-        current_app.logger.info(f"Successfully created user with student ID: {student_id}")
+        current_app.logger.info(
+            f"Successfully created user with student ID: {student_id}"
+        )
         return jsonify({"message": "User created successfully"}), 201
     finally:
         cursor.close()

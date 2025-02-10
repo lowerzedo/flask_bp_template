@@ -1,48 +1,41 @@
 from flask import Flask
 from .config import Config, TestConfig
-from .routes.blueprint import blueprint
-from .utils.logger import setup_logging
+from flask_smorest import Api
+from app.utils.logger import setup_logging
+from app.utils.error_handler import handle_error
+from app.controllers.user_controllers import bp as user_bp
 
-
-def create_app(config_name="default", config_class=Config) -> Flask:
-    """
-    Create and configure the Flask application.
-
-    :param config_class: Configuration class to use.
-    :return: Configured Flask application.
-    """
-
-    if config_name == "testing":
-        config_class = TestConfig
-    else:
-        config_class = Config
-
+def create_app(config_name="default") -> Flask:
     app = Flask(__name__)
-    app.config.from_object(config_class)
+
+    # Load configuration based on environment
+    if config_name == "testing":
+        app.config.from_object(TestConfig)
+    else:
+        app.config.from_object(Config)
+
+    # OpenAPI / Swagger configuration
+    app.config["API_TITLE"] = "Student API"
+    app.config["API_VERSION"] = "v1"
+    app.config["OPENAPI_VERSION"] = "3.0.2"
+    app.config["OPENAPI_URL_PREFIX"] = ""  # All OpenAPI routes without prefix
+    app.config["OPENAPI_SWAGGER_UI_PATH"] = "/docs"  # Swagger UI served at /docs
+    app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 
     # Setup logging
     setup_logging(app)
 
-    # Register Blueprints
-    app.register_blueprint(blueprint, url_prefix="/example")
+    # Initialize API and register blueprint
+    api = Api(app)
+    api.register_blueprint(user_bp)
 
     # Register error handlers
-    register_error_handlers(app)
+    app.register_error_handler(404, handle_error)
+    app.register_error_handler(500, handle_error)
 
     return app
 
 
 def register_error_handlers(app: Flask) -> None:
-    """
-    Register custom error handlers for the Flask app.
-
-    :param app: Flask application instance.
-    """
-
-    @app.errorhandler(404)
-    def not_found_error(error):
-        return {"error": "Resource not found"}, 404
-
-    @app.errorhandler(500)
-    def internal_error(error):
-        return {"error": "Internal server error"}, 500
+    # Your error handler logic (if not using the ones in utils/error_handler.py)
+    pass
