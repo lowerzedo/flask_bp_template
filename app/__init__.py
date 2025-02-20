@@ -1,9 +1,19 @@
-from flask import Flask
+from flask import Flask, request
 from .config import Config, TestConfig
 from flask_smorest import Api
 from app.utils.logger import setup_logging
 from app.utils.error_handler import handle_error
-from app.controllers.user_controllers import bp as user_bp
+from app.routes.blueprints import bp
+
+
+# @bp.after_request
+# def set_cors(response):
+#     origin = request.headers.get('Origin')
+#     response.headers['Access-Control-Allow-Origin'] = origin # here you can specify the domains that you want to allow.
+#     response.headers['Access-Control-Allow-Credentials'] = 'true' # here you can specify if you want to allow credentials (cookies, authorization headers, etc)
+#     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PATCH, DELETE, OPTIONS' # here you can specify the methods that you want to allow
+#     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization' # here you can specify the headers that you want to allow
+#     return response
 
 def create_app(config_name="default") -> Flask:
     app = Flask(__name__)
@@ -27,7 +37,17 @@ def create_app(config_name="default") -> Flask:
 
     # Initialize API and register blueprint
     api = Api(app)
-    api.register_blueprint(user_bp)
+    api.register_blueprint(bp, url_prefix='/api')
+
+    # Global CORS header addition for all routes
+    @app.after_request
+    def cors_headers(response):
+        origin = request.headers.get('Origin') or '*'
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PATCH, DELETE, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        return response
 
     # Register error handlers
     app.register_error_handler(404, handle_error)
