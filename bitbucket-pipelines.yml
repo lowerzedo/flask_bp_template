@@ -12,6 +12,7 @@ pipelines:
             - source venv/bin/activate
             - pip install --upgrade pip
             - pip install -r requirements.txt
+            - PYTHONPATH=. pytest tests/ -v
             - zappa update dev || zappa deploy dev
     master:
       - step:
